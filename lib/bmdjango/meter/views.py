@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from datetime import date
+from datetime import date, datetime, timedelta
 
 from django.conf import settings
 from django.shortcuts import render_to_response
@@ -31,9 +31,14 @@ def result(request, dt):
         stats = paginator.page(paginator.num_pages)
 
     context['page'] = stats 
+    context['update_time'] = settings.CHANGE_DAY
 
     return render_to_response('results.html', context,
                 context_instance=RequestContext(request))
     
 def current_result(request):
-    return result(request, date.today())
+    if settings.CHANGE_DAY > datetime.now().time():
+        # Show yesterday data:
+        return result(request, (datetime.now() - timedelta(1)).date() )
+    else:    
+        return result(request, date.today())

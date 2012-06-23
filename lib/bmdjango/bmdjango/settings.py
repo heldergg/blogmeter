@@ -8,6 +8,7 @@
 ## file to make any change you might need.
 ##
 
+import datetime
 import os.path
 project_dir = os.path.abspath ( os.path.join( os.path.dirname( __file__ ), '../..' ))
 django_dir = os.path.abspath ( os.path.join( os.path.dirname( __file__ ), '..' ))
@@ -176,6 +177,13 @@ LOGGING = {
         },
     }
 }
+
+##
+## Blogmeter specific
+##
+
+# At what time should we start showing the current day stats:
+CHANGE_DAY = datetime.time(2,0,0)
 
 
 ##
