@@ -10,6 +10,8 @@ from django.core.paginator import Paginator
 
 from meter.models import Blog, Stats
 
+PAGE_DISPLAY = 25
+
 def result(request, dt):
     context = {}
 
@@ -20,7 +22,7 @@ def result(request, dt):
         page = 1
 
     objects = Stats.objects.filter(date__exact = dt ).order_by('-visits_daily_average')
-    paginator = Paginator(objects, 25)
+    paginator = Paginator(objects, PAGE_DISPLAY)
 
     if page < 1:
         page = 1
@@ -29,6 +31,13 @@ def result(request, dt):
 
     context['page'] = paginator.page(page)
 
+    object_list = []
+    k = (page - 1)*PAGE_DISPLAY + 1
+    for obj in context['page'].object_list:
+        obj.pos = k
+        k += 1
+        object_list.append(obj)
+    context['page'].object_list = object_list
 
     return render_to_response('results.html', context,
                 context_instance=RequestContext(request))

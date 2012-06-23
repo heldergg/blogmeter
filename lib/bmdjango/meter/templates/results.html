@@ -16,7 +16,7 @@
 </tr>
 {% for stat in page.object_list %}
 <tr>
-  <td></td>
+  <td align="right">{{ stat.pos }}</td>
   <td><a href="{{ stat.blog.url }}" target="_blank">{{ stat.blog.name }}</a> (<a href="{{ stat.blog.sitemeter_url }}" target="_blank">stats</a>)</td>
   <td align="right">{{ stat.visits_total }}</td>
   <td align="right">{{ stat.visits_daily_average }}</td>
