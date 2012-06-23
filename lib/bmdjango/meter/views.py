@@ -15,7 +15,11 @@ PAGE_DISPLAY = 25
 def result(request, dt):
     context = {}
 
-    objects = Stats.objects.filter(date__exact = dt ).order_by('-visits_daily_average')
+    objects = Stats.objects.filter(date__exact = dt ).order_by(
+        '-visits_daily_average',
+        '-visits_total',
+        '-pages_daily_average',
+        '-pages_total')
     paginator = Paginator(objects, PAGE_DISPLAY)
 
     page = request.GET.get('page', 1)
