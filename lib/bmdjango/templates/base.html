@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <!--[if lte IE 7]>
+      <div style="background:yellow;color:red;width:100%;margin:0;padding:0.5em;">
+         <p>Está a utilizar uma versão antiga do Internet Explorer. Não vai
+            conseguir usufruir da totalidade deste site (para além do facto de
+            estar vulnerável a uma grande quantidade de vírus e afins). Faça
+            a actualização do Internet Explorer ou
+            <a href="http://www.firefox.com/">mude</a> para um
+            <a href="http://www.opera.com/">browser</a> de
+            <a href="http://www.google.com/chrome">qualidade</a>.</p>
+      </div>
+    <![endif]-->
+    {% block body_content %}{% endblock %}
+  </body>
+</html>
+

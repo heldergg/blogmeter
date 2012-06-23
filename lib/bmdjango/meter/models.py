@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+from datetime import date
 
 class Blog( models.Model ):
 
@@ -7,10 +7,19 @@ class Blog( models.Model ):
     url = models.URLField()
     sitemeter_key = models.CharField(max_length=64, unique=True)
 
+    error_count = models.IntegerField(default=0)
+
+    def sitemeter_url(self):
+        return 'http://www.sitemeter.com/default.asp?action=stats&site=%s' % self.sitemeter_key
+
+##
+# Stats
+##
+
 class Stats( models.Model ):
     blog = models.ForeignKey('Blog')
     
-    timestamp = models.DateTimeField(default=datetime.now)
+    date = models.DateField(default=date.today)
 
     visits_total = models.IntegerField()
     visits_daily_average = models.IntegerField()
@@ -20,7 +29,10 @@ class Stats( models.Model ):
     visits_this_week = models.IntegerField()
     pages_total = models.IntegerField()
     pages_daily_average = models.IntegerField()
-    pages_lenght_average = models.IntegerField()
+    pages_visit_average = models.FloatField()
     pages_last_hour = models.IntegerField()
     pages_today = models.IntegerField()
     pages_this_week = models.IntegerField()
+
+    class Meta:
+        unique_together = (('blog','date'),)

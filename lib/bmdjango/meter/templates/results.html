@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Blogómetro{% endblock %}
+
+{% block body_content %}
+<h1>Lista por média diária de visitas</h1>
+
+<table>
+<tr>
+  <th>Pos.</th>
+  <th>Nome</th>
+  <th>Total Visitas</th>
+  <th>Média Visitas</th>
+  <th>Total Páginas</th>
+  <th>Média Páginas</th>
+</tr>
+{% for stat in page.object_list %}
+<tr>
+  <td></td>
+  <td>{{ stat.blog.name }}</td>
+  <td align="right">{{ stat.visits_total }}</td>
+  <td align="right">{{ stat.visits_daily_average }}</td>
+  <td align="right">{{ stat.pages_total }}</td>
+  <td align="right">{{ stat.pages_daily_average}}</td>
+</tr>
+{% endfor %}
+</table>
+
+
+{% if page.has_previous %}
+<a href="?page=1">|&lt;</a>&nbsp;
+<a href="?page={{ page.previous_page_number }}">&lt;</a>&nbsp;&nbsp;&nbsp;{% endif %}
+{% if page.has_next %}
+<a href="?page={{ page.next_page_number }}">&gt;</a>&nbsp;
+<a href="?page={{ page.end_index }}">&gt;|</a>
+{% endif %} 
+{% endblock %}
