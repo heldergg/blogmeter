@@ -15,11 +15,21 @@ framework.
 """
 import os
 
+import sys
+
+sys.path.append('/arquivo/www/blogometro.aventar.eu/local')
+sys.path.append('/arquivo/www/blogometro.aventar.eu/blogmeter/lib')
+sys.path.append('/arquivo/www/blogometro.aventar.eu/blogmeter/lib/bmdjango')
+sys.path.append('/arquivo/www/blogometro.aventar.eu/blogmeter/lib/bmdjango/bmdjango')
+
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bmdjango.settings")
 
 # This application object is used by any WSGI server configured to use this
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
+
+print sys.path
+
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 

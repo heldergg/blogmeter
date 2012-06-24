@@ -152,6 +152,6 @@ class SitemeterScraper(object):
                     tb = traceback.format_exc()
                     print tb
                                     
-                t = 1 + random.randint(1,2) - 1
+                t = 0.5
                 print '  Sleeping %d seconds' % t
                 time.sleep(t)
