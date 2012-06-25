@@ -32,6 +32,7 @@ def result(request, dt):
 
     context['page'] = stats 
     context['update_time'] = settings.CHANGE_DAY
+    context['date'] = dt
 
     return render_to_response('results.html', context,
                 context_instance=RequestContext(request))
