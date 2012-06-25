@@ -89,7 +89,7 @@ def blog_search(request):
         blogs = paginator.page(paginator.num_pages)
 
     context['page'] = blogs
-    context['query'] = urllib.quote(query)
+    context['query'] = urllib.quote(query.encode('utf8'))
 
     return render_to_response('blog_list.html', context,
                 context_instance=RequestContext(request))
