@@ -23,6 +23,10 @@ def usage():
         -r 
         --read_stats        Reads the stats from sitemeter       
 
+        -u <sitemeter_key>
+        --read_single <sitemeter_key>
+                            Reads the stats of a single blog
+
         -h 
         --help              This help screen
 
@@ -32,8 +36,8 @@ def usage():
 if __name__ == '__main__':
     try:
         opts, args = getopt.getopt(sys.argv[1:], 
-                                   'hrv', 
-                                   ['help', 'read_stats','verbose'])
+                                   'hru:v', 
+                                   ['help', 'read_stats','read_single=','verbose'])
     except getopt.GetoptError, err:
         print str(err)
         print
@@ -46,6 +50,13 @@ if __name__ == '__main__':
             from webscraper.scrapstats import SitemeterScraper
             scraper = SitemeterScraper()
             scraper.run()
+            sys.exit()
+
+        elif o in ('-u', '--read_single'):
+            from webscraper.scrapstats import SitemeterScraper
+            sitemeter_key = a.strip()
+            scraper = SitemeterScraper()
+            scraper.read_blog(sitemeter_key)
             sys.exit()
 
         elif o in ('-h', '--help'):
