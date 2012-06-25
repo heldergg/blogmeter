@@ -3,8 +3,12 @@
 {% block title %}Blogómetro{% endblock %}
 
 {% block body_content %}
-<h1>Lista por média diária de visitas - {{ date|date:"Y-m-d" }}</h1>
+<h1>Lista por média diária de visitas - {{ today|date:"Y-m-d" }}</h1>
 
+<p><a href="{% url result_archive yesterday %}">Antes</a> 
+   {% if tomorrow %}| <a href="{% url result_archive tomorrow %}">Depois</a>{% endif %}</p>
+
+{% if page %}
 <table>
 <tr>
   <th>Pos.</th>
@@ -33,5 +37,8 @@
 {% if page.has_next %}
 <a href="?page={{ page.next_page_number }}">&gt;</a>&nbsp;
 <a href="?page={{ page.paginator.num_pages }}">&gt;|</a>
+{% endif %} 
+{% else %}
+<p>Lamentamos mas não temos estatísticas para {{ today|date:"Y-m-d" }}.</p>
 {% endif %} 
 {% endblock %}
