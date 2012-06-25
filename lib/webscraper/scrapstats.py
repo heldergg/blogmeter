@@ -7,15 +7,16 @@ extract the blog stats for the blogmeter project.
 
 # Imports
 
-import sys
+import bs4
 import logging
 import os.path
-import urllib
-import bs4
 import random
+import socket
+import sys
 import time
 import traceback
-import socket
+import unicodedata
+import urllib
 
 from datetime import date
 
@@ -55,6 +56,12 @@ def get_time( st ):
     mm, ss = [ int(xi) for xi in st.split(':') ]
     return 60 * mm + ss
 
+def debug_unicode( st ):
+    if isinstance( st, unicode):
+        return unicodedata.normalize('NFKD', st).encode('ascii','ignore')
+    else:
+        return unicodedata.normalize('NFKD', unicode( st, 'ascii', 'ignore')).encode('ascii')
+du = debug_unicode
 
 class UpdateStats(object):
     def __init__(self, blog):
@@ -112,7 +119,7 @@ class UpdateStats(object):
         stats.save() 
 
     def run(self):
-        print '* Getting stats for: %s' % self.blog.name
+        print '* Getting stats for: %s' % du(self.blog.name)
         print '  %s' % self.blog.sitemeter_url()
 
         html = urllib.urlopen(self.blog.sitemeter_url()).read()
@@ -128,30 +135,47 @@ class SitemeterScraper(object):
     def __init__(self):
         self.blog_list = Blog.objects.filter(error_count__lt = MAXBLOGERROR )
 
+    def check_stat(self, blog):
+        '''Returns True if we have read the blog stats today
+        '''
+        try:
+            Stats.objects.get( blog = blog, date = date.today() )
+            print "  Already got today's stats."
+            return True
+        except ObjectDoesNotExist:    
+            return False
+
     def run(self):
-        for blog in self.blog_list:
+        blog_list = list(self.blog_list)
+        while blog_list:
+            blog = blog_list.pop()
+
+            # Take the stat once per day
+            if self.check_stat(blog):
+                continue
+
+            # Read the blog stats
             try:
-                Stats.objects.get( blog = blog, date = date.today() )
-                print "  Already got today's stats."
-            except ObjectDoesNotExist:
-                try:
-                    stats = UpdateStats(blog).run()
-                except Exception, msg:
-                    # TODO: should not use a catch all except
-                    #
-                    # timeout should not increase the error_count
-                    #
-                    blog.error_count = blog.error_count + 1
-                    blog.save()
+                stats = UpdateStats(blog).run()
+                # Reset the read error count
+                blog.error_count = 0
+                blog.save()
+            except socket.timeout:
+                # There was a timeout the blog returns to
+                # the blog list
+                blog_list.insert(0, blog)
+                print '  Returned the blog to the queue.'
+            except Exception, msg:
+                # Increase the blog's error count
+                blog.error_count = blog.error_count + 1
+                blog.save()
+                print msg
 
-                    print 
-                    print msg
-                    print 
-
-                    exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
-                    tb = traceback.format_exc()
-                    print tb
+                # Print the error traceback (for debugging):
+                exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
+                tb = traceback.format_exc()
+                print tb
                                     
-                t = 0.5
-                print '  Sleeping %d seconds' % t
-                time.sleep(t)
+            t = 0.5
+            print '  Sleeping %4.2f seconds' % t
+            time.sleep(t)
