@@ -28,8 +28,6 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "bmdjango.settings")
 # file. This includes Django's development server, if the WSGI_APPLICATION
 # setting points here.
 
-print sys.path
-
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()
 
