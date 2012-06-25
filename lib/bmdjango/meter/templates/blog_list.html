@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Blogómetro{% endblock %}
+
+{% block body_content %}
+<h1>Lista de blogs inscritos no Blogómetro</h1>
+
+{% if page %}
+<table>
+<tr>
+  <th>Nome</th>
+  <th># Erros</th>
+</tr>
+{% for blog in page %}
+<tr>
+  <td><a href="{{ blog.url }}" target="_blank">{{ blog.name }}</a> (<a href="{{ blog.sitemeter_url }}" target="_blank">stats</a>)</td>
+  <td align="right">{{ blog.error_count }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<br>
+{% if page.has_previous %}
+<a href="?page=1&query={{ query }}">|&lt;</a>&nbsp;
+<a href="?page={{ page.previous_page_number }}&query={{ query }}">&lt;</a>&nbsp;&nbsp;&nbsp;{% endif %}
+{% if page.has_next %}
+<a href="?page={{ page.next_page_number }}&query={{ query }}">&gt;</a>&nbsp;
+<a href="?page={{ page.paginator.num_pages }}&query={{ query }}">&gt;|</a>
+{% endif %} 
+
+<p>A coluna "# Erros" indica a quantidade de vezes que tentámos, sem sucesso,
+ler as estatísticas do blog.</p>
+{% else %}
+<p>Lamentamos, ainda não temos blogs inscritos.</p>
+{% endif %} 
+{% endblock %}

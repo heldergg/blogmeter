@@ -6,5 +6,5 @@ urlpatterns = patterns('',
     url(r'^$', 'meter.views.current_result', name='current_result'),
 
     # Blogmeter specific:
-    (r'^meter/', include('meter.urls')),
+    (r'^mt/', include('meter.urls')),
 )
