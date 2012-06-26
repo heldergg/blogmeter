@@ -151,20 +151,24 @@ class SitemeterScraper(object):
             if self.check_stat( blog ):
                 print "* ERROR: We have read this blog's stats today, bailing out."
                 return
-
-            try:
-                stats = UpdateStats(blog).run()
-                print "* Success!"
-                return stats
-            except socket.timeout:
-                # There was a timeout
-                print "* ERROR: There was a time out maybe the server is busy, try again later"
-            except Exception, msg:
-                # Uncaught error
-                print "* ERROR: %s" % msg
-
         except ObjectDoesNotExist:
             print "* ERROR: Sorry, we don't have %s key in our db." % sitemeter_key
+            return
+
+        try:
+            stats = UpdateStats(blog).run()
+            # Reset the read error count
+            blog.error_count = 0
+            blog.save()
+            print "* Success!"
+            return stats
+        except socket.timeout:
+            # There was a timeout
+            print "* ERROR: There was a time out maybe the server is busy, try again later"
+        except Exception, msg:
+            # Uncaught error
+            print "* ERROR: %s" % msg
+
 
     def run(self):
         blog_list = list(self.blog_list)
