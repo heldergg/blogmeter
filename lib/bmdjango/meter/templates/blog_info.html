@@ -1,15 +1,29 @@
 {% extends "base.html" %}
 
-{% block body_content %}
-<h1>Lista por média diária de visitas - {{ today|date:"Y-m-d" }}</h1>
+{% block title %}- {{ blog.name }}{% endblock %}
 
-<p><a href="{% url result_archive yesterday %}">Antes</a> 
-   {% if tomorrow %}| <a href="{% url result_archive tomorrow %}">Depois</a>{% endif %}</p>
+{% block body_content %}
+<h1>Informação Blog: {{ blog.name }}</h1>
+
+<table>
+<tr>
+  <th>Nome</th>
+  <th># Erros</th>
+</tr>
+<tr>
+  <td><a href="{{ blog.url }}" target="_blank">{{ blog.name }}</a> (<a href="{{ blog.sitemeter_url }}" target="_blank">stats</a>)</td>
+  <td align="right">{{ blog.error_count }}</td>
+</tr>
+</table>
+
+<p>A coluna "# Erros" indica a quantidade de vezes que tentámos, sem sucesso,
+ler as estatísticas deste blog.</p>
+
+<h2>Resultados</h2>
 
 {% if page %}
 <table>
 <tr>
-  <th>Pos.</th>
   <th>Nome</th>
   <th>Total Visitas</th>
   <th>Média Visitas</th>
@@ -18,8 +32,7 @@
 </tr>
 {% for stat in page %}
 <tr>
-  <td align="right">{{ page.start_index|add:forloop.counter0 }}</td>
-  <td><a href="{{ stat.blog.url }}" target="_blank">{{ stat.blog.name }}</a> (<a href="{{ stat.blog.sitemeter_url }}" target="_blank">stats</a> | <a href="{% url blog_info stat.blog.id %}">info</a>)</td>
+  <td><a href="{% url result_archive stat.date %}">{{ stat.date|date:"Y-m-d" }}</a></td>
   <td align="right">{{ stat.visits_total }}</td>
   <td align="right">{{ stat.visits_daily_average }}</td>
   <td align="right">{{ stat.pages_total }}</td>
@@ -37,6 +50,6 @@
 <a href="?page={{ page.paginator.num_pages }}">&gt;|</a>
 {% endif %} 
 {% else %}
-<p>Lamentamos mas não temos estatísticas para {{ today|date:"Y-m-d" }}.</p>
+<p>Lamentamos mas não temos estatísticas para {{ blog.name }}.</p>
 {% endif %} 
 {% endblock %}

@@ -13,7 +13,7 @@
 </tr>
 {% for blog in page %}
 <tr>
-  <td><a href="{{ blog.url }}" target="_blank">{{ blog.name }}</a> (<a href="{{ blog.sitemeter_url }}" target="_blank">stats</a>)</td>
+  <td><a href="{{ blog.url }}" target="_blank">{{ blog.name }}</a> (<a href="{{ blog.sitemeter_url }}" target="_blank">stats</a> | <a href="{% url blog_info blog.id %}">info</a>)</td>
   <td align="right">{{ blog.error_count }}</td>
 </tr>
 {% endfor %}

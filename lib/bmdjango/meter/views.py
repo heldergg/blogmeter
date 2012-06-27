@@ -4,12 +4,13 @@ from datetime import date, datetime, timedelta
 import urllib
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Max
+from django.db.models import Q
+from django.http import Http404
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.db.models import Max
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http import Http404
-from django.db.models import Q
 
 from meter.models import Blog, Stats
 
@@ -92,4 +93,29 @@ def blog_search(request):
     context['query'] = urllib.quote(query.encode('utf8'))
 
     return render_to_response('blog_list.html', context,
+                context_instance=RequestContext(request))
+
+def blog_info(request, blog_id):
+    context = {}
+
+    try:
+        blog = Blog.objects.get( id = blog_id )
+    except ObjectDoesNotExist:
+        raise Http404
+        
+    objects = Stats.objects.filter(blog__exact = blog ).order_by( '-date' )
+    paginator = Paginator(objects, PAGE_DISPLAY)
+
+    page = request.GET.get('page', 1)
+    try:
+        stats = paginator.page(page)
+    except PageNotAnInteger:
+        stats = paginator.page(1)
+    except EmptyPage:
+        stats = paginator.page(paginator.num_pages)
+
+    context['page'] = stats
+    context['blog'] = blog
+
+    return render_to_response('blog_info.html', context,
                 context_instance=RequestContext(request))
