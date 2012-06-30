@@ -1,0 +1,14 @@
+/* General purpose blogometer css file */
+
+table {
+    border-width: 0 0 1px 1px;
+    border-spacing: 0;
+    border-collapse: collapse;
+    border-style: solid; }
+
+td, th {
+    margin: 0;
+    padding: 2px;
+    border-width: 1px 1px 0 0;
+    border-style: solid; }
+a { text-decoration:none; }

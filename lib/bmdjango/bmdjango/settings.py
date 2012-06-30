@@ -43,6 +43,10 @@ DATABASES = {
 # system time zone.
 TIME_ZONE = 'Europe/Lisbon'
 
+##
+## Language
+##
+
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
@@ -56,6 +60,10 @@ USE_I18N = True
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale
 USE_L10N = True
+
+##
+## Media
+##
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
@@ -81,6 +89,7 @@ STATICFILES_DIRS = (
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
+    os.path.join( django_dir, 'static' ),
 )
 
 # List of finder classes that know how to find static files in
@@ -88,8 +97,11 @@ STATICFILES_DIRS = (
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
 )
+
+##
+## Other suff
+##
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = 'dg77vxuxn3jr5w7*(4j00*w6p@-9#yymq3*wrg%qt7_*o&5x9v'

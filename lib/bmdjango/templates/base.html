@@ -3,24 +3,11 @@
     <title>Blogómetro - As estatísticas dos blogues portugueses {% block title %}{% endblock %}</title>
     <meta name="keywords" content="blogómetro, blogs, blogues, portugueses, portugal, estatísticas, sitemeter, acessos">
     <meta name="description" content="Sistema de classificação dos blogs portugueses de acordo com as estatísticas do sitemeter.">
-
-    <style type="text/css">
-    table {
-        border-width: 0 0 1px 1px;
-        border-spacing: 0;
-        border-collapse: collapse;
-        border-style: solid; }
-
-    td, th {
-        margin: 0;
-        padding: 2px;
-        border-width: 1px 1px 0 0;
-        border-style: solid; }
-    a { text-decoration:none; }
-    </style>
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css">
+    {% block header %}{% endblock %}
   </head>
   <body>
-    <!--[if lte IE 7]>
+    <!--[if lte IE 8]>
       <div style="background:yellow;color:red;width:100%;margin:0;padding:0.5em;">
          <p>Está a utilizar uma versão antiga do Internet Explorer. Não vai
             conseguir usufruir da totalidade deste site (para além do facto de
@@ -32,7 +19,7 @@
       </div>
     <![endif]-->
     <a href="/">
-    <img src="http://aventadores.files.wordpress.com/2012/06/blogometro2.png?w=700" alt="Blogometro Logo">
+    <img src="{{ STATIC_URL }}img/banner-logo.png" alt="Blogometro Logo" width="700" height="140">
     </a>
     <br>
     {% block body_content %}{% endblock %}
