@@ -10,6 +10,12 @@ urlpatterns = patterns('',
     # Blogmeter specific:
     (r'^mt/', include('meter.urls')),
 
+    # Authenticated Interface
+    (r'^auth/', include('authapp.urls')),
+
+    # Registration Interface
+    (r'^registar/', include('registrationapp.urls')),
+
     # AboutView
     url(r'^about/', TemplateView.as_view(template_name="about.html"), name='about'),
 )

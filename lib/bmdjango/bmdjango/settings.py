@@ -114,6 +114,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'utils.middleware.threadlocals.ThreadLocals',
 )
 
 ROOT_URLCONF = 'bmdjango.urls'
@@ -153,7 +155,10 @@ INSTALLED_APPS = (
     # Blogmeter apps:
 
     'meter',
+    'authapp',
+    'registrationapp'
 )
+    
 
 ##
 ## Logging
@@ -191,12 +196,39 @@ LOGGING = {
 }
 
 ##
+## Authentication and sessions
+##
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 24 * 3600 * 14   # 14 days
+SESSION_COOKIE_SECURE = False    # set to True if using https
+SESSION_COOKIE_NAME = 'blogmeter_sessionid'
+
+LOGIN_URL   = '/auth/login/'
+LOGOUT_URL  = '/auth/logout/'
+
+LOGIN_REDIRECT_URL = '/'
+
+REMEMBER_LOGIN = True
+
+FAILURE_LIMIT= 3 # number of failed attempts
+
+## CAPTCHA CONFIGURATION
+## This keys work only for local testing at 127.0.0.1!
+RECAPTCHA_PUB_KEY = '6Lcc-AAAAAAAAN4NOVSI_E9oPvilVrvDDuoVXsgJ'
+RECAPTCHA_PRIV_KEY = '6Lcc-AAAAAAAAOztgVgg9SHtgYknCkvo42B7vBCf'
+RECAPTCHA_THEME = 'white'
+
+# Registration
+PASSWORD_MIN_SIZE = 3
+PASSWORD_MAX_SIZE = 30
+
+##
 ## Blogmeter specific
 ##
 
 # At what time should we start showing the current day stats:
 CHANGE_DAY = datetime.time(2,0,0)
-
 
 ##
 ## LOCAL
