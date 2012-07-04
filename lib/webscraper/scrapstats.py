@@ -18,7 +18,7 @@ import traceback
 import unicodedata
 import urllib
 
-from datetime import date
+from datetime import date, datetime, timedelta
 
 # Django general
 from django.conf import settings
@@ -179,27 +179,33 @@ class SitemeterScraper(object):
             if self.check_stat(blog):
                 continue
 
+            # Sleep for a little bit if the last stat read was less than
+            # 5 minutes ago.
+            if (datetime.now() - blog.last_try) < timedelta(0, 5 * 60):
+                print '  Read this stat less than 5 minutes ago. Sleeping a bit'
+                time.sleep(60)
+
             # Read the blog stats
             try:
                 stats = UpdateStats(blog).run()
                 # Reset the read error count
                 blog.error_count = 0
-                blog.save()
-            except socket.timeout:
-                # There was a timeout the blog returns to
-                # the blog list
+            except (socket.timeout, IndexError) as e:
+                # Recoverable error, going to try again
                 blog_list.insert(0, blog)
                 print '  Returned the blog to the queue.'
             except Exception, msg:
                 # Increase the blog's error count
                 blog.error_count = blog.error_count + 1
-                blog.save()
                 print msg
 
                 # Print the error traceback (for debugging):
                 exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
                 tb = traceback.format_exc()
                 print tb
+            finally:    
+                blog.last_try = datetime.now()    
+                blog.save()
                                     
             t = 0.5
             print '  Sleeping %4.2f seconds' % t

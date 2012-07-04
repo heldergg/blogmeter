@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import date
+from datetime import date, datetime
 
 class Blog( models.Model ):
 
@@ -8,6 +8,7 @@ class Blog( models.Model ):
     sitemeter_key = models.CharField(max_length=64, unique=True)
 
     error_count = models.IntegerField(default=0)
+    last_try = models.DateTimeField(default=datetime.now)
 
     def sitemeter_url(self):
         return 'http://www.sitemeter.com/default.asp?action=stats&site=%s' % self.sitemeter_key
