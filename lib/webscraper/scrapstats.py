@@ -129,7 +129,7 @@ class UpdateStats(object):
 
         self.save_reading(parsed_result) 
 
-MAXBLOGERROR = 5
+MAXBLOGERROR = 10
 
 class SitemeterScraper(object):
     def __init__(self):
