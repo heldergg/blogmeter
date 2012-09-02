@@ -11,13 +11,11 @@
   <th># Erros</th>
 </tr>
 <tr>
-  <td><a href="{{ blog.url }}" target="_blank">{{ blog.name }}</a> (<a href="{{ blog.sitemeter_url }}" target="_blank">stats</a>)</td>
+  <td><a href="{{ blog.url }}" target="_blank">{{ blog.name }}</a> (<a href="{{ blog.sitemeter_url }}" target="_blank">sitemeter</a>)</td>
   <td align="right">{{ blog.error_count }}</td>
 </tr>
 </table>
 
-<p>A coluna "# Erros" indica a quantidade de vezes que tentámos, sem sucesso,
-ler as estatísticas deste blog.</p>
 
 <h2>Resultados</h2>
 
@@ -49,6 +47,8 @@ ler as estatísticas deste blog.</p>
 <a href="?page={{ page.next_page_number }}">&gt;</a>&nbsp;
 <a href="?page={{ page.paginator.num_pages }}">&gt;|</a>
 {% endif %} 
+<p>NOTA: A coluna "# Erros" indica a quantidade de vezes que tentámos, sem sucesso,
+ler as estatísticas deste blog. Notar que desistimos de tentar ler as estatísticas depois de 10 tentativas falhadas.</p>
 {% else %}
 <p>Lamentamos mas não temos estatísticas para {{ blog.name }}.</p>
 {% endif %} 

@@ -19,7 +19,7 @@
 {% for stat in page %}
 <tr>
   <td align="right">{{ page.start_index|add:forloop.counter0 }}</td>
-  <td><a href="{{ stat.blog.url }}" target="_blank">{{ stat.blog.name }}</a> (<a href="{{ stat.blog.sitemeter_url }}" target="_blank">stats</a> | <a href="{% url blog_info stat.blog.id %}">info</a>)</td>
+  <td><a href="{{ stat.blog.url }}" target="_blank">{{ stat.blog.name }}</a> (<a href="{{ stat.blog.sitemeter_url }}" target="_blank">sitemeter</a> | <a href="{% url blog_info stat.blog.id %}">stats</a>)</td>
   <td align="right">{{ stat.visits_total }}</td>
   <td align="right">{{ stat.visits_daily_average }}</td>
   <td align="right">{{ stat.pages_total }}</td>
