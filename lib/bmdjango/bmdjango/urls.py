@@ -18,4 +18,7 @@ urlpatterns = patterns('',
 
     # AboutView
     url(r'^about/', TemplateView.as_view(template_name="about.html"), name='about'),
+
+    # FAQ view
+    url(r'^faq/', TemplateView.as_view(template_name="faq.html"), name='faq'),
 )

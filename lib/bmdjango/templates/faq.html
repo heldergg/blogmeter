@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}- FAQ{% endblock %}
+
+{% block body_content %}
+<h1>Perguntas Frequentes</h1>
+
+<div class="faq-item">
+<p class="question">- O meu blog pode ser inscrito no Blogómetro?</p>
+<p class="answer">- Claro que sim! Todos os blogs podem participar.</p>
+</div>
+
+<hr>
+
+<div class="faq-item">
+<p class="question">- Como posso, então, inscrever o meu blog?</p>
+<p class="answer">- Em primeiro lugar é necessário ter o blog inscrito no <a href="http://www.sitemeter.com/">Sitemeter</a>. O Sitemeter é um site que recolhe estatísticas sobre o tráfego que chega ao seu site.</p> 
+
+<p class="answer">Ainda no Sitemeter, é necessário que as estatísticas geradas estejam disponíveis para leitura. Isso consegue-se ajustando o nível de privacidade para <em>Normal</em>, para fazer isso deve, em primeiro lugar, escolher <em>manage</em> e depois <em>privacy level</em>:</p>
+
+<img src="{{ STATIC_URL }}img/sitemeter.png">
+
+<p class="answer">Para testar o seu blog, dirija-se à página das estatísticas, deverá conseguir ver qualquer coisa como <a href="http://www.sitemeter.com/default.asp?action=stats&site=s10448000">a página de estatísticas do Aventar</a>.</p>
+
+<p class="answer">Para complicar um bocadinho as coisas, o Sitemeter usa cookies para identificar o utilizador que está a aceder às estatísticas. Assim pode-se dar o caso do teste anterior funcionar perfeitamente para si e, para o resto do mundo, o acesso estar vedado. A melhor solução é testar de um browser que não tenha usado antes para aceder ao Sitemeter ou então usar o <em>modo incógnito</em> disponível em Browsers modernos.</p>
+
+<p class="answer">Depois de ter o seu blog inscrito no Sitemeter, basta enviar-nos uma mensagem, faça-o usando o <a href="http://aventar.eu/contacto/">formulário de contacto do Aventar</a>.
+
+</div>
+
+{% endblock %}
