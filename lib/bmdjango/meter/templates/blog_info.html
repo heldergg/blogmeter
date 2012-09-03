@@ -47,9 +47,9 @@
 <a href="?page={{ page.next_page_number }}">&gt;</a>&nbsp;
 <a href="?page={{ page.paginator.num_pages }}">&gt;|</a>
 {% endif %} 
-<p>NOTA: A coluna "# Erros" indica a quantidade de vezes que tentámos, sem sucesso,
-ler as estatísticas deste blog. Notar que desistimos de tentar ler as estatísticas depois de 10 tentativas falhadas.</p>
 {% else %}
 <p>Lamentamos mas não temos estatísticas para {{ blog.name }}.</p>
 {% endif %} 
+<p>NOTA: A coluna "# Erros" indica a quantidade de vezes que tentámos, sem sucesso,
+ler as estatísticas deste blog. Notar que desistimos de tentar ler as estatísticas depois de 10 tentativas falhadas.</p>
 {% endblock %}

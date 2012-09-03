@@ -4,6 +4,7 @@
     <meta name="keywords" content="blogómetro, blogs, blogues, portugueses, portugal, estatísticas, sitemeter, acessos">
     <meta name="description" content="Sistema de classificação dos blogs portugueses de acordo com as estatísticas do sitemeter.">
     <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/style.css">
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:400,700' rel='stylesheet' type='text/css'>
     {% block header %}{% endblock %}
   </head>
   <body>
@@ -18,17 +19,21 @@
             <a href="http://www.google.com/chrome">qualidade</a>.</p>
       </div>
     <![endif]-->
-    <a href="/">
-    <img src="{{ STATIC_URL }}img/banner-logo.png" alt="Blogometro Logo" width="700" height="140">
-    </a>
-    <br>
-    {% block body_content %}{% endblock %}
-    <br>
-    <hr>
-    <form method="GET" action="{% url blog_search %}">
-    <p> O meu blog está inscrito? 
-    <input type="search" name="query" maxlength="128" placeholder="Nome do blog"/><button type="submit" value="Submit">Busca</button></form> 
-    <p style="text-align:center"><a href="{% url about %}">Acerca</a> | <a href="http://aventar.eu/tag/blogometro/" target="_blank">Notícias</a> | <a href="http://aventar.eu/">Aventar</a> {% if user.is_authenticated %}| Utilizador Autenticado{% endif %}
+    <div id="contents">
+      <div id="banner">
+        <a href="/">
+        <img src="{{ STATIC_URL }}img/banner-logo.png" alt="Blogometro Logo" width="100%">
+        </a>
+      </div>
+      {% block body_content %}{% endblock %}
+      <br>
+    </div>
+    <div id="footer">
+      <form method="GET" action="{% url blog_search %}">
+      <p> O meu blog está inscrito? 
+      <input type="search" name="query" maxlength="128" placeholder="Nome do blog"/><button type="submit" value="Submit">Busca</button></form> 
+      <p style="text-align:center"><a href="/">Início</a> | <a href="{% url about %}">Acerca</a> | <a href="{% url faq %}">Perguntas Frequentes</a> | <a href="http://aventar.eu/tag/blogometro/" target="_blank">Notícias</a> | <a href="http://aventar.eu/">Aventar</a> 
+    </div>
   </body>
 </html>
 

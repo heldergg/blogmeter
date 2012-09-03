@@ -1,5 +1,29 @@
 /* General purpose blogometer css file */
 
+body {
+    background-color:gray;
+    padding: 4em;
+    font-family: 'Ubuntu', sans-serif;
+    line-height: 150%;
+}
+
+#contents {
+    background-color: white;
+    margin: 0;
+    padding: 1.5em;
+    max-width: 1000px;
+    border-radius:1.5em;
+}
+
+#banner {
+    margin-bottom: 1.5em;
+}
+
+.question {
+    font-style:italic;
+    font-weight:bold;
+}
+
 table {
     border-width: 0 0 1px 1px;
     border-spacing: 0;
@@ -11,4 +35,5 @@ td, th {
     padding: 2px;
     border-width: 1px 1px 0 0;
     border-style: solid; }
+
 a { text-decoration:none; }
