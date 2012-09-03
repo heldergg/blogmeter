@@ -17,7 +17,7 @@
   <th>Média Páginas</th>
 </tr>
 {% for stat in page %}
-<tr>
+{% if stat.blog.id == highlight %}<tr style="background-color:yellow;">{% else %}<tr>{% endif %}
   <td align="right">{{ page.start_index|add:forloop.counter0 }}</td>
   <td><a href="{{ stat.blog.url }}" target="_blank">{{ stat.blog.name }}</a> (<a href="{{ stat.blog.sitemeter_url }}" target="_blank">sitemeter</a> | <a href="{% url blog_info stat.blog.id %}">stats</a>)</td>
   <td align="right">{{ stat.visits_total }}</td>

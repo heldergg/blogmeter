@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}- {{ blog.name }}{% endblock %}
+
+{% block body_content %}
+<h1>Não temos classificação para o blog!</h1> 
+
+<p>Não encontrei estatísticas para o blog: {{ blog.name }}, em {{ date|date:"Y-m-d" }}</p>
+
+<p>Consulte a <a href="{% url blog_info blog_id=blog.id %}">página de informações do blog</a> para visualizar as estatísticas que
+temos.</p> 
+{% endblock %}
