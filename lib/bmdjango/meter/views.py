@@ -86,13 +86,12 @@ def blog_highlight(request, dt, blog_id):
         '-visits_daily_average',
         '-visits_total',
         '-pages_daily_average',
-        '-pages_total')
+        '-pages_total').values_list('blog_id', flat=True)
 
-    # TODO: This is awfully inefficient. We must find a way to do this properly
-    # maybe by maintaining a classification table or column in Stats.
+
     have_classification = False
-    for index, stat in enumerate(objects):    
-        if stat.blog.id == blog.id:
+    for index, blog_id in enumerate(objects):    
+        if blog_id == blog.id:
             have_classification = True
             break
 
