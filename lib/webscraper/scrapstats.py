@@ -130,6 +130,7 @@ class UpdateStats(object):
         self.save_reading(parsed_result) 
 
 MAXBLOGERROR = 10
+STOPHOUR = 8 # Stop the scraper after STOPHOUR
 
 class SitemeterScraper(object):
     def __init__(self):
@@ -169,8 +170,19 @@ class SitemeterScraper(object):
             # Uncaught error
             print "* ERROR: %s" % msg
 
+    def calc_stop_hour(self):
+        now = datetime.now()
+        if now.hour > STOPHOUR:
+            # Will only stop tomorrow
+            tomorrow = now + timedelta(1)
+            year, month, day = tomorrow.year, tomorrow.month, tomorrow.day
+        else:
+            year, month, day = now.year, now.month, now.day
+            
+        return datetime(year, month, day, STOPHOUR) 
 
     def run(self):
+        stop_hour = self.calc_stop_hour()
         blog_list = list(self.blog_list)
         while blog_list:
             blog = blog_list.pop()
@@ -206,6 +218,10 @@ class SitemeterScraper(object):
             finally:    
                 blog.last_try = datetime.now()    
                 blog.save()
+
+            if datetime.now() > stop_hour:
+                print '* Exceeded the alloted time, bailing out.'  
+                break
                                     
             t = 0.5
             print '  Sleeping %4.2f seconds' % t
