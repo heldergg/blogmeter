@@ -88,7 +88,6 @@ def blog_highlight(request, dt, blog_id):
         '-pages_daily_average',
         '-pages_total').values_list('blog_id', flat=True)
 
-
     have_classification = False
     for index, blog_id in enumerate(objects):    
         if blog_id == blog.id:
@@ -129,7 +128,8 @@ def blog_search(request):
     # NOTE: If the number of blogs grows substantially (tens of thousands)
     # this search method has to be changed.
     result = Blog.objects.filter( Q(name__icontains = query) |
-                                 Q(sitemeter_key__icontains = query) 
+                                 Q(sitemeter_key__icontains = query) |
+                                 Q(url__icontains = query) 
                                ).order_by('name')
 
     paginator = Paginator(result, PAGE_DISPLAY)
