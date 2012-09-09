@@ -152,6 +152,10 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
+    # Admin app:
+    'django.contrib.messages',
+    'django.contrib.admin',
+
     # Blogmeter apps:
 
     'meter',

@@ -2,6 +2,9 @@
 
 from django.conf.urls import patterns, include, url
 from django.views.generic import TemplateView
+from django.contrib import admin
+
+admin.autodiscover()
 
 urlpatterns = patterns('',
     # The index view
@@ -21,4 +24,7 @@ urlpatterns = patterns('',
 
     # FAQ view
     url(r'^faq/', TemplateView.as_view(template_name="faq.html"), name='faq'),
+
+    # Admin views
+    url(r'^admin/', include(admin.site.urls)), 
 )

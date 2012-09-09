@@ -13,10 +13,11 @@
 </tr>
 {% for blog in page %}
 <tr>
-  <td><a href="{{ blog.url }}" target="_blank">{{ blog.name }}</a> (<a href="{{ blog.sitemeter_url }}" target="_blank">sitemeter</a> | <a href="{% url blog_info blog.id %}">stats</a>)</td>
+  <td><a href="{{ blog.url }}" target="_blank">{{ blog.name }}</a></td>
   <td align="right">{{ blog.error_count }}</td>
-  <td><a href="{{ blog.sitemeter_url }}" target="_blank">sitemeter</a></td>
-  <td><a href="{% url highlight_today blog_id=blog.id %}">Classificação hoje</a></td>
+  <td>&nbsp;&nbsp;<a href="{{ blog.sitemeter_url }}" target="_blank">sitemeter</a>&nbsp;&nbsp;</td>
+  <td>&nbsp;&nbsp;<a href="{% url blog_info blog.id %}">stats</a>&nbsp;&nbsp;</td>
+  <td>&nbsp;&nbsp;<a href="{% url highlight_today blog_id=blog.id %}">Classificação hoje</a>&nbsp;&nbsp;</td>
 </tr>
 {% endfor %}
 </table>
