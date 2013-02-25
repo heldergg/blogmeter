@@ -7,6 +7,10 @@ body {
     line-height: 150%;
 }
 
+h1 {
+  margin: 1em 0 1em 0;
+}
+
 #contents {
     background-color: white;
     margin: 0;
@@ -22,6 +26,23 @@ body {
     margin-bottom: 1.5em;
 }
 
+#menu {
+  border: solid;
+  border-width: 0 0 3px 0;
+  border-color: #990033;
+  padding: 0; 
+  margin: 0 -1.5em 0 -1.5em;
+}
+
+#menu a {
+  padding: 0.3em 0.5em 0.3em 0.5em;
+}
+
+#menu a:hover {
+  color:white;
+  background-color: #990033;
+}
+
 .question {
     font-style:italic;
     font-weight:bold;
@@ -31,12 +52,16 @@ table {
     border-width: 0 0 1px 1px;
     border-spacing: 0;
     border-collapse: collapse;
-    border-style: solid; }
+    border-style: solid; 
+    border-color: lightgray; 
+}
 
 td, th {
     margin: 0;
     padding: 4px;
     border-width: 1px 1px 0 0;
-    border-style: solid; }
+    border-style: solid;
+    border-color: lightgray; 
+}
 
 a { text-decoration:none; }

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block body_content %}
+
+<h1>Estatisticas mensais da blogoesfera - {{ month }}/{{ year }}</h1>
+
+<p><a href="{{ prev_month.url }}">{{ prev_month.text }}</a> | 
+   <a href="{{ next_month.url }}">{{ next_month.text }}</a> 
+</p>
+
+{% if page %}
+<table>
+<tr>
+  <th>Pos.</th>
+  <th>Nome</th>
+  <th>Visitas</th>
+  <th>Páginas</th>
+</tr>
+{% for blog in page %}
+{% if blog.id == highlight %}<tr style="background-color:yellow;">{% else %}<tr>{% endif %}
+  <td align="right">{{ page.start_index|add:forloop.counter0 }}</td>
+  <td><a href="{{ blog.url }}" target="_blank">{{ blog.name }}</a> (<a href="http://www.sitemeter.com/default.asp?action=stats&site={{ sitemeter_key }}" target="_blank">sitemeter</a> | <a href="{% url 'blog_info' blog.id %}">stats</a>)</td>
+  <td align="right">{{ blog.visits }}</td>
+  <td align="right">{{ blog.pages }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<br>
+{% if page.has_previous %}
+<a href="?page=1">|&lt;</a>&nbsp;
+<a href="?page={{ page.previous_page_number }}">&lt;</a>&nbsp;&nbsp;&nbsp;{% endif %}
+{% if page.has_next %}
+<a href="?page={{ page.next_page_number }}">&gt;</a>&nbsp;
+<a href="?page={{ page.paginator.num_pages }}">&gt;|</a>
+{% endif %} 
+{% else %}
+<p>Lamentamos mas não temos estatísticas para {{ month }}/{{ year }}.</p>
+{% endif %} 
+{% endblock %}

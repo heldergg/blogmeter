@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from datetime import date, datetime, timedelta
+import calendar
 import urllib
 
 from django.conf import settings
@@ -16,6 +17,7 @@ from django.core.urlresolvers import reverse
 from meter.models import Blog, Stats
 
 PAGE_DISPLAY = 25
+FIRSTYEAR = 2012
 
 ##
 ## Result display
@@ -114,6 +116,109 @@ def highlight_today(request, blog_id):
         return blog_highlight(request, (datetime.now() - timedelta(1)).date().isoformat(), blog.id )
     else:    
         return blog_highlight(request, date.today().isoformat(), blog.id )
+
+##
+## Monthly stats
+##
+
+def current_month(request):
+    dt = date.today()
+    month = dt.month
+    year = dt.year
+    return redirect(reverse('monthly_stats',kwargs={'year':year, 'month':month}))
+
+month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+               'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+
+def month_delta( year, month, delta ):
+    if delta not in (-1, 1):
+        raise Exception('delta must be -1 or 1')
+    month = month + delta
+    if month > 12:
+        month = 1 
+        year += 1
+    if month < 1:
+        month = 12
+        year -= 1 
+    return year, month
+
+def month_url( year, month):
+    url = reverse('monthly_stats',kwargs={'year':year, 'month':month})
+    text = '%s/%d' % (month_names[month-1], year)
+    
+    return { 'url': url, 'text': text }
+
+def next_month_url( year, month):
+    year, month =  month_delta( year, month, 1) 
+    return month_url(year, month)
+
+def prev_month_url( year, month):
+    year, month = month_delta( year, month, -1) 
+    return month_url(year, month)
+     
+
+def monthly_stats(request, year, month):
+    context = {}
+
+    # Args checking
+    try:
+        year = int(year)
+        cmonth = int(month)
+    except:
+        raise Http404
+    if cmonth<1 or cmonth>12:
+        raise Http404
+    try:
+        highlight = int(request.GET.get('highlight', -1))
+    except:
+        highlight = -1
+
+    # Utilities
+    context['month'] = month_names[cmonth-1]
+    context['year'] = year
+    context['next_month'] = next_month_url( year, cmonth )
+    context['prev_month'] = prev_month_url( year, cmonth )
+    context['highlight'] = highlight
+
+    # Find the boundary dates 
+    initial_date = date(year, cmonth, 1)
+    final_date = date(year,cmonth,calendar.monthrange(year,cmonth)[1]) 
+
+    # Get the data:
+    objects = Blog.objects.raw('''select
+           b.id,
+           b.name as name,
+           b.url as url,
+           b.sitemeter_key as sitemeter_key, 
+           sum(s.visits_daily_average) as visits,
+           sum(s.pages_daily_average) as pages
+       from
+           meter_blog b,
+           meter_stats s
+       where
+           s.date >= %s and
+           s.date <= %s and
+           b.id = s.blog_id
+       group by
+           b.id
+       order by
+           sum(s.visits_daily_average) desc;''', [initial_date, final_date])
+
+    # Pagination
+    paginator = Paginator(list(objects), PAGE_DISPLAY)
+    page = request.GET.get('page', 1)
+    try:
+        stats = paginator.page(page)
+    except PageNotAnInteger:
+        stats = paginator.page(1)
+    except EmptyPage:
+        stats = paginator.page(paginator.num_pages)
+    context['page'] = stats 
+
+
+    return render_to_response('monthly_stats.html', context,
+                context_instance=RequestContext(request))
+
 ##
 ## Blog search
 ##
