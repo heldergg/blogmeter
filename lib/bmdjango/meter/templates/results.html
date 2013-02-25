@@ -3,8 +3,8 @@
 {% block body_content %}
 <h1>Lista por média diária de visitas - {{ today|date:"Y-m-d" }}</h1>
 
-<p><a href="{% url result_archive yesterday %}">Antes</a> 
-   {% if tomorrow %}| <a href="{% url result_archive tomorrow %}">Depois</a>{% endif %}</p>
+<p><a href="{% url 'result_archive' yesterday %}">Antes</a> 
+   {% if tomorrow %}| <a href="{% url 'result_archive' tomorrow %}">Depois</a>{% endif %}</p>
 
 {% if page %}
 <table>
@@ -19,7 +19,7 @@
 {% for stat in page %}
 {% if stat.blog.id == highlight %}<tr style="background-color:yellow;">{% else %}<tr>{% endif %}
   <td align="right">{{ page.start_index|add:forloop.counter0 }}</td>
-  <td><a href="{{ stat.blog.url }}" target="_blank">{{ stat.blog.name }}</a> (<a href="{{ stat.blog.sitemeter_url }}" target="_blank">sitemeter</a> | <a href="{% url blog_info stat.blog.id %}">stats</a>)</td>
+  <td><a href="{{ stat.blog.url }}" target="_blank">{{ stat.blog.name }}</a> (<a href="{{ stat.blog.sitemeter_url }}" target="_blank">sitemeter</a> | <a href="{% url 'blog_info' stat.blog.id %}">stats</a>)</td>
   <td align="right">{{ stat.visits_total }}</td>
   <td align="right">{{ stat.visits_daily_average }}</td>
   <td align="right">{{ stat.pages_total }}</td>

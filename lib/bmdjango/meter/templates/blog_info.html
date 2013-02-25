@@ -30,12 +30,12 @@
 </tr>
 {% for stat in page %}
 <tr>
-  <td><a href="{% url result_archive stat.date %}">{{ stat.date|date:"Y-m-d" }}</a></td>
+  <td><a href="{% url 'result_archive' stat.date %}">{{ stat.date|date:"Y-m-d" }}</a></td>
   <td align="right">{{ stat.visits_total }}</td>
   <td align="right">{{ stat.visits_daily_average }}</td>
   <td align="right">{{ stat.pages_total }}</td>
   <td align="right">{{ stat.pages_daily_average}}</td>
-  <td align="right"><a href="{% url blog_highlight dt=stat.date.isoformat blog_id=blog.id %}">Classificação</a></td>
+  <td align="right"><a href="{% url 'blog_highlight' dt=stat.date.isoformat blog_id=blog.id %}">Classificação</a></td>
 </tr>
 {% endfor %}
 </table>
