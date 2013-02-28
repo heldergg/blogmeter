@@ -65,3 +65,10 @@ td, th {
 }
 
 a { text-decoration:none; }
+
+.pagination {
+  padding-top: 1.5em;
+  padding-bottom: 2em;
+  text-align: center;
+  }
+

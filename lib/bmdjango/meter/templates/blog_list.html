@@ -23,13 +23,7 @@
 </table>
 
 <br>
-{% if page.has_previous %}
-<a href="?page=1&query={{ query }}">|&lt;</a>&nbsp;
-<a href="?page={{ page.previous_page_number }}&query={{ query }}">&lt;</a>&nbsp;&nbsp;&nbsp;{% endif %}
-{% if page.has_next %}
-<a href="?page={{ page.next_page_number }}&query={{ query }}">&gt;</a>&nbsp;
-<a href="?page={{ page.paginator.num_pages }}&query={{ query }}">&gt;|</a>
-{% endif %} 
+{% include "pagination.html" %}
 
 <p>A coluna "# Erros" indica a quantidade de vezes que tentámos, sem sucesso,
 ler as estatísticas do blog. Notar que desistimos de tentar ler as estatísticas depois

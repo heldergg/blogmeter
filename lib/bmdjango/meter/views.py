@@ -301,6 +301,3 @@ def blog_info(request, blog_id):
 
     return render_to_response('blog_info.html', context,
                 context_instance=RequestContext(request))
-
-           
-           
