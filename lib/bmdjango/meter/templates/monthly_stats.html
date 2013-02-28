@@ -4,10 +4,11 @@
 
 <h1>Estatisticas mensais da blogoesfera</h1>
 
-<p><a href="{% url 'monthly_stats' year=prev_month.year month=prev_month.month %}">{{ prev_month.text }}</a> | 
-   <span style="font-size:150%;">{{ month }}/{{ year }}</span> |
-   <a href="{% url 'monthly_stats' year=next_month.year month=next_month.month %}">{{ next_month.text }}</a> 
-</p>
+<div class="pagination">
+  <a href="{% url 'monthly_stats' year=prev_month.year month=prev_month.month %}">{{ prev_month.text }}</a> | 
+  <span style="font-size:150%;">{{ month }}/{{ year }}</span> |
+  <a href="{% url 'monthly_stats' year=next_month.year month=next_month.month %}">{{ next_month.text }}</a> 
+</div>
 
 {% if page %}
 <table>

@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 
 {% block body_content %}
-<h1>Lista por média diária de visitas - {{ today|date:"Y-m-d" }}</h1>
+<h1>Lista por média diária de visitas</h1>
 
-<p><a href="{% url 'result_archive' yesterday %}">Antes</a> 
-   {% if tomorrow %}| <a href="{% url 'result_archive' tomorrow %}">Depois</a>{% endif %}</p>
+<div class="pagination">
+  <a href="{% url 'result_archive' yesterday %}">Antes</a> |
+  <span style="font-size:170%;">{{ today|date:"Y-m-d" }}</span> 
+  {% if tomorrow %}| <a href="{% url 'result_archive' tomorrow %}">Depois</a>{% endif %}</p>
+</div>
 
 {% if page %}
 <table>

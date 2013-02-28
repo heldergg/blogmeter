@@ -1,13 +1,18 @@
 {% extends "base.html" %}
 
+{% block header %}
+
+{% endblock %}
+
 {% block body_content %}
 
 <h1>Estatisticas agregadas da blogoesfera</h1> 
 
-<p><a href="{% url 'aggregate_stats' year=prev_month.year month=prev_month.month %}">{{ prev_month.text }}</a> | 
-   <span style="font-size:150%;">{{ month }}/{{ year }}</span> |
-   <a href="{% url 'aggregate_stats' year=next_month.year month=next_month.month %}">{{ next_month.text }}</a> 
-</p>
+<div class="pagination">
+  <a href="{% url 'aggregate_stats' year=prev_month.year month=prev_month.month %}">{{ prev_month.text }}</a> | 
+  <span style="font-size:150%;">{{ month }}/{{ year }}</span> |
+  <a href="{% url 'aggregate_stats' year=next_month.year month=next_month.month %}">{{ next_month.text }}</a> 
+</div>
 
 {% if page %}
 <table>
@@ -16,7 +21,7 @@
   <th>Visitas</th>
   <th>Páginas</th>
 </tr>
-{% for date in page %}
+{% for date in objects %}
   <td>{{ date.date|date:"Y-m-d" }}</td>
   <td align="right">{{ date.visits }}</td>
   <td align="right">{{ date.pages }}</td>
@@ -25,8 +30,6 @@
 </table>
 
 <br>
-{% include "pagination.html" %}
-
 {% else %}
 <p>Lamentamos mas não temos estatísticas para {{ month }}/{{ year }}.</p>
 {% endif %} 

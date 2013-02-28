@@ -191,6 +191,7 @@ def monthly_view(request, template, year, month, query):
 
     # Get the data:
     objects = Blog.objects.raw(query, [initial_date, final_date])
+    context['objects'] = objects
 
     # Pagination
     paginator = Paginator(list(objects), PAGE_DISPLAY)
