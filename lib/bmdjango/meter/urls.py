@@ -10,6 +10,10 @@ urlpatterns = patterns('meter.views',
     url(r'^monthly/current_month/$', 'current_month', name='current_month'),
     url(r'^monthly/(?P<year>\d{4})/(?P<month>\d{1,2})/$', 'monthly_stats', name='monthly_stats'),
 
+    # Aggregate monthly stats
+    url(r'^aggregate/current_month/$', 'aggregate_month', name='aggregate_month'),
+    url(r'^aggregate/(?P<year>\d{4})/(?P<month>\d{1,2})/$', 'aggregate_stats', name='aggregate_stats'),
+
     # Blog Highlight
     url(r'^highlight/(?P<dt>\d{4}-\d{2}-\d{2})/(?P<blog_id>\d+)/$', 'blog_highlight', name='blog_highlight' ),
     url(r'^highlight/(?P<blog_id>\d+)/$', 'highlight_today', name='highlight_today' ),

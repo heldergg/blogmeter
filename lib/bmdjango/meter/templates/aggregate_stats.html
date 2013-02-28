@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block body_content %}
+
+<h1>Estatisticas agregadas da blogoesfera</h1> 
+
+<p><a href="{% url 'aggregate_stats' year=prev_month.year month=prev_month.month %}">{{ prev_month.text }}</a> | 
+   <span style="font-size:150%;">{{ month }}/{{ year }}</span> |
+   <a href="{% url 'aggregate_stats' year=next_month.year month=next_month.month %}">{{ next_month.text }}</a> 
+</p>
+
+{% if page %}
+<table>
+<tr>
+  <th>Data</th>
+  <th>Visitas</th>
+  <th>Páginas</th>
+</tr>
+{% for date in page %}
+  <td>{{ date.date|date:"Y-m-d" }}</td>
+  <td align="right">{{ date.visits }}</td>
+  <td align="right">{{ date.pages }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<br>
+{% if page.has_previous %}
+<a href="?page=1">|&lt;</a>&nbsp;
+<a href="?page={{ page.previous_page_number }}">&lt;</a>&nbsp;&nbsp;&nbsp;{% endif %}
+{% if page.has_next %}
+<a href="?page={{ page.next_page_number }}">&gt;</a>&nbsp;
+<a href="?page={{ page.paginator.num_pages }}">&gt;|</a>
+{% endif %} 
+{% else %}
+<p>Lamentamos mas não temos estatísticas para {{ month }}/{{ year }}.</p>
+{% endif %} 
+{% endblock %}

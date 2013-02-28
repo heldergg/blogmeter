@@ -127,6 +127,12 @@ def current_month(request):
     year = dt.year
     return redirect(reverse('monthly_stats',kwargs={'year':year, 'month':month}))
 
+def aggregate_month(request):
+    dt = date.today()
+    month = dt.month
+    year = dt.year
+    return redirect(reverse('aggregate_stats',kwargs={'year':year, 'month':month}))
+
 month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
@@ -146,7 +152,7 @@ def month_url( year, month):
     url = reverse('monthly_stats',kwargs={'year':year, 'month':month})
     text = '%s/%d' % (month_names[month-1], year)
     
-    return { 'url': url, 'text': text }
+    return { 'text': text, 'month': month, 'year':year }
 
 def next_month_url( year, month):
     year, month =  month_delta( year, month, 1) 
@@ -156,8 +162,7 @@ def prev_month_url( year, month):
     year, month = month_delta( year, month, -1) 
     return month_url(year, month)
      
-
-def monthly_stats(request, year, month):
+def monthly_view(request, template, year, month, query):
     context = {}
 
     # Args checking
@@ -185,24 +190,7 @@ def monthly_stats(request, year, month):
     final_date = date(year,cmonth,calendar.monthrange(year,cmonth)[1]) 
 
     # Get the data:
-    objects = Blog.objects.raw('''select
-           b.id,
-           b.name as name,
-           b.url as url,
-           b.sitemeter_key as sitemeter_key, 
-           sum(s.visits_daily_average) as visits,
-           sum(s.pages_daily_average) as pages
-       from
-           meter_blog b,
-           meter_stats s
-       where
-           s.date >= %s and
-           s.date <= %s and
-           b.id = s.blog_id
-       group by
-           b.id
-       order by
-           sum(s.visits_daily_average) desc;''', [initial_date, final_date])
+    objects = Blog.objects.raw(query, [initial_date, final_date])
 
     # Pagination
     paginator = Paginator(list(objects), PAGE_DISPLAY)
@@ -215,9 +203,48 @@ def monthly_stats(request, year, month):
         stats = paginator.page(paginator.num_pages)
     context['page'] = stats 
 
-
-    return render_to_response('monthly_stats.html', context,
+    return render_to_response(template, context,
                 context_instance=RequestContext(request))
+
+## Monthly stats
+def monthly_stats(request, year, month):
+    query = '''select
+           b.id,
+           b.name as name,
+           b.url as url,
+           b.sitemeter_key as sitemeter_key, 
+           sum(s.visits_daily_average) as visits,
+           sum(s.pages_daily_average) as pages,
+           1.0*sum(s.pages_daily_average)/sum(s.visits_daily_average) as quality
+       from
+           meter_blog b,
+           meter_stats s
+       where
+           s.date >= %s and
+           s.date <= %s and
+           b.id = s.blog_id
+       group by
+           b.id
+       order by
+           sum(s.visits_daily_average) desc;'''
+    return monthly_view(request, 'monthly_stats.html', year, month, query )
+
+## Aggregate stats
+def aggregate_stats(request, year, month):
+    query = '''select
+            id,
+            date,
+            sum(visits_daily_average) as visits,
+            sum(pages_daily_average) as pages
+        from
+            meter_stats
+        where
+            date >= %s and
+            date <= %s
+        group by
+            date;
+    '''
+    return monthly_view(request, 'aggregate_stats.html', year, month, query)
 
 ##
 ## Blog search
