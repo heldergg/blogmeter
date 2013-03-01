@@ -1,7 +1,38 @@
 {% extends "base.html" %}
 
 {% block header %}
+  <script language="javascript" type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.9.1.min.js"></script>
+  <script language="javascript" type="text/javascript" src="{{ STATIC_URL }}js/jquery.jqplot-1.0.7.min.js"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}js/jqplot.dateAxisRenderer.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/jquery.jqplot.min.css" />
+  <script type="text/javascript">
+  $(function() {
+    $("#datatable").addClass("hidden");
 
+    var visits=[ {% for date in objects %}[ '{{ date.date|date:"Y-m-d"}}', {{ date.visits }}],{% endfor %} ];
+    var pages=[ {% for date in objects %}[ '{{ date.date|date:"Y-m-d"}}', {{ date.pages }}],{% endfor %} ];
+    var plot1 = $.jqplot('aggregate_chart', [pages, visits, ], {
+      axes:{ xaxis:{renderer:$.jqplot.DateAxisRenderer,
+             tickOptions:{formatString:'%Y-%m-%d'},
+             min:'{{ start_date|date:"Y-m-d" }}', 
+             max:'{{ end_date|date:"Y-m-d" }}', 
+             tickInterval:'5 day'}, },
+      series:[{lineWidth:4, 
+               fill: true,
+               fillAndStroke: true, 
+               fillAlpha: 0.2, 
+               label: 'Páginas', },
+              {lineWidth:4, 
+               fill: true,
+               fillAndStroke: true, 
+               fillAlpha: 0.1,
+               label: 'Visitas', },
+            ],
+      legend: { show: true,
+                location: 'ne', },
+    });
+  });
+  </script>
 {% endblock %}
 
 {% block body_content %}
@@ -15,6 +46,9 @@
 </div>
 
 {% if page %}
+<div id="aggregate_chart" style="width:100%; height:300px;"></div>
+
+<div id="datatable">
 <table>
 <tr>
   <th>Data</th>
@@ -22,12 +56,14 @@
   <th>Páginas</th>
 </tr>
 {% for date in objects %}
+<tr>
   <td>{{ date.date|date:"Y-m-d" }}</td>
   <td align="right">{{ date.visits }}</td>
   <td align="right">{{ date.pages }}</td>
 </tr>
 {% endfor %}
 </table>
+</div>
 
 <br>
 {% else %}

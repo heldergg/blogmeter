@@ -16,7 +16,7 @@ from django.core.urlresolvers import reverse
 
 from meter.models import Blog, Stats
 
-PAGE_DISPLAY = 25
+PAGE_DISPLAY = 30
 FIRSTYEAR = 2012
 
 ##
@@ -192,6 +192,8 @@ def monthly_view(request, template, year, month, query):
     # Get the data:
     objects = Blog.objects.raw(query, [initial_date, final_date])
     context['objects'] = objects
+    context['start_date'] = initial_date
+    context['end_date'] = final_date
 
     # Pagination
     paginator = Paginator(list(objects), PAGE_DISPLAY)
