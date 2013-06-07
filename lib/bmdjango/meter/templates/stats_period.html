@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block body_content %}
+
+<h1>Estatísticas ao longo de um período de tempo</h1>
+
+<div class="pagination">
+  <span style="font-size:150%;">De {{ start_date|date:'Y-m-d' }} a {{ end_date|date:'Y-m-d' }}</span>
+</div>
+
+{% if page %}
+<table>
+<tr>
+  <th>Pos.</th>
+  <th>Nome</th>
+  <th>Visitas</th>
+  <th>Páginas</th>
+  <th>Qualidade</th>
+</tr>
+{% for blog in page %}
+{% if blog.id == highlight %}<tr style="background-color:yellow;">{% else %}<tr>{% endif %}
+  <td align="right">{{ page.start_index|add:forloop.counter0 }}</td>
+  <td><a href="{{ blog.url }}" target="_blank">{{ blog.name }}</a> (<a href="http://www.sitemeter.com/default.asp?action=stats&site={{ sitemeter_key }}" target="_blank">sitemeter</a> | <a href="{% url 'blog_info' blog.id %}">stats</a>)</td>
+  <td align="right">{{ blog.visits|intcomma }}</td>
+  <td align="right">{{ blog.pages|intcomma }}</td>
+  <td align="right">{{ blog.quality|floatformat:3 }}</td>
+</tr>
+{% endfor %}
+</table>
+
+<br>
+{% include "pagination.html" %}
+
+{% else %}
+<p>Lamentamos mas não temos estatísticas para o período que indicou...</p>
+{% endif %} 
+{% endblock %}

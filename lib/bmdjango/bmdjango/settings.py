@@ -49,7 +49,7 @@ TIME_ZONE = 'Europe/Lisbon'
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt'
 
 SITE_ID = 1
 
@@ -124,7 +124,7 @@ ROOT_URLCONF = 'bmdjango.urls'
 WSGI_APPLICATION = 'bmdjango.wsgi.application'
 
 
-## 
+##
 ## Templates
 ##
 
@@ -151,6 +151,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
 
     # Admin app:
     'django.contrib.messages',
@@ -162,7 +163,7 @@ INSTALLED_APPS = (
     'authapp',
     'registrationapp'
 )
-    
+
 
 ##
 ## Logging

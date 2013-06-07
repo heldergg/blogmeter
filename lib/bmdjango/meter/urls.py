@@ -6,9 +6,13 @@ urlpatterns = patterns('meter.views',
     # Archive access
     url(r'^(?P<dt>\d{4}-\d{2}-\d{2})/$', 'result_archive', name='result_archive' ),
 
-    # Monthly stats 
+    # Monthly stats
     url(r'^monthly/current_month/$', 'current_month', name='current_month'),
     url(r'^monthly/(?P<year>\d{4})/(?P<month>\d{1,2})/$', 'monthly_stats', name='monthly_stats'),
+
+    # Stats over a period of time
+    url(r'^(?P<dt0>\d{4}-\d{2}-\d{2})/(?P<dt1>\d{4}-\d{2}-\d{2})/$',
+        'stats_period', name='stats_period'),
 
     # Aggregate monthly stats
     url(r'^aggregate/current_month/$', 'aggregate_month', name='aggregate_month'),

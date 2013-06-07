@@ -48,7 +48,7 @@ def result(request, dt):
         stats = paginator.page(paginator.num_pages)
 
     context['highlight'] = highlight
-    context['page'] = stats 
+    context['page'] = stats
     context['update_time'] = settings.CHANGE_DAY
     context['today'] = dt
     context['yesterday'] = (dt - timedelta(1))
@@ -57,12 +57,12 @@ def result(request, dt):
 
     return render_to_response('results.html', context,
                 context_instance=RequestContext(request))
-    
+
 def current_result(request):
     if settings.CHANGE_DAY > datetime.now().time():
         # Show yesterday data:
         return result(request, (datetime.now() - timedelta(1)).date() )
-    else:    
+    else:
         return result(request, date.today())
 
 def result_archive(request, dt):
@@ -72,7 +72,7 @@ def result_archive(request, dt):
         raise Http404
     return result(request, dt)
 
-def blog_highlight(request, dt, blog_id):                
+def blog_highlight(request, dt, blog_id):
     context = {}
 
     # Check the URL:
@@ -82,7 +82,7 @@ def blog_highlight(request, dt, blog_id):
         raise Http404
 
     blog = get_object_or_404(Blog, id = blog_id )
-        
+
     # Get the blog classification
     objects = Stats.objects.filter(date__exact = dt ).order_by(
         '-visits_daily_average',
@@ -91,7 +91,7 @@ def blog_highlight(request, dt, blog_id):
         '-pages_total').values_list('blog_id', flat=True)
 
     have_classification = False
-    for index, blog_id in enumerate(objects):    
+    for index, blog_id in enumerate(objects):
         if blog_id == blog.id:
             have_classification = True
             break
@@ -101,9 +101,9 @@ def blog_highlight(request, dt, blog_id):
         context['date'] = dt
         return render_to_response('no_classification.html', context,
                context_instance=RequestContext(request))
-      
+
     # Calculate the page number:
-    page_number = index / PAGE_DISPLAY + 1 
+    page_number = index / PAGE_DISPLAY + 1
 
     return redirect('%s?page=%d&highlight=%d' % (reverse('result_archive', kwargs={'dt':dt}),
                                     page_number,
@@ -114,7 +114,7 @@ def highlight_today(request, blog_id):
     if settings.CHANGE_DAY > datetime.now().time():
         # Show yesterday data:
         return blog_highlight(request, (datetime.now() - timedelta(1)).date().isoformat(), blog.id )
-    else:    
+    else:
         return blog_highlight(request, date.today().isoformat(), blog.id )
 
 ##
@@ -133,7 +133,7 @@ def aggregate_month(request):
     year = dt.year
     return redirect(reverse('aggregate_stats',kwargs={'year':year, 'month':month}))
 
-month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 
+month_names = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
                'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
 
 def month_delta( year, month, delta ):
@@ -141,27 +141,27 @@ def month_delta( year, month, delta ):
         raise Exception('delta must be -1 or 1')
     month = month + delta
     if month > 12:
-        month = 1 
+        month = 1
         year += 1
     if month < 1:
         month = 12
-        year -= 1 
+        year -= 1
     return year, month
 
 def month_url( year, month):
     url = reverse('monthly_stats',kwargs={'year':year, 'month':month})
     text = '%s/%d' % (month_names[month-1], year)
-    
+
     return { 'text': text, 'month': month, 'year':year }
 
 def next_month_url( year, month):
-    year, month =  month_delta( year, month, 1) 
+    year, month =  month_delta( year, month, 1)
     return month_url(year, month)
 
 def prev_month_url( year, month):
-    year, month = month_delta( year, month, -1) 
+    year, month = month_delta( year, month, -1)
     return month_url(year, month)
-     
+
 def monthly_view(request, template, year, month, query):
     context = {}
 
@@ -185,9 +185,9 @@ def monthly_view(request, template, year, month, query):
     context['prev_month'] = prev_month_url( year, cmonth )
     context['highlight'] = highlight
 
-    # Find the boundary dates 
+    # Find the boundary dates
     initial_date = date(year, cmonth, 1)
-    final_date = date(year,cmonth,calendar.monthrange(year,cmonth)[1]) 
+    final_date = date(year,cmonth,calendar.monthrange(year,cmonth)[1])
 
     # Get the data:
     objects = Blog.objects.raw(query, [initial_date, final_date])
@@ -204,7 +204,7 @@ def monthly_view(request, template, year, month, query):
         stats = paginator.page(1)
     except EmptyPage:
         stats = paginator.page(paginator.num_pages)
-    context['page'] = stats 
+    context['page'] = stats
 
     return render_to_response(template, context,
                 context_instance=RequestContext(request))
@@ -215,7 +215,7 @@ def monthly_stats(request, year, month):
            b.id,
            b.name as name,
            b.url as url,
-           b.sitemeter_key as sitemeter_key, 
+           b.sitemeter_key as sitemeter_key,
            sum(s.visits_daily_average) as visits,
            sum(s.pages_daily_average) as pages,
            1.0*sum(s.pages_daily_average)/sum(s.visits_daily_average) as quality
@@ -231,6 +231,62 @@ def monthly_stats(request, year, month):
        order by
            sum(s.visits_daily_average) desc;'''
     return monthly_view(request, 'monthly_stats.html', year, month, query )
+
+## Stats over a period of time
+def stats_period(request, dt0, dt1):
+    context = {}
+
+    # Get the dates:
+    try:
+        initial_date = datetime.strptime(dt0, '%Y-%m-%d').date()
+        final_date = datetime.strptime(dt1, '%Y-%m-%d').date()
+    except:
+        raise Http404
+
+    if initial_date > final_date:
+        print "#" * 80
+        initial_date, final_date = final_date, initial_date
+
+    # Query
+    query = '''select
+           b.id,
+           b.name as name,
+           b.url as url,
+           b.sitemeter_key as sitemeter_key,
+           sum(s.visits_daily_average) as visits,
+           sum(s.pages_daily_average) as pages,
+           1.0*sum(s.pages_daily_average)/sum(s.visits_daily_average) as quality
+       from
+           meter_blog b,
+           meter_stats s
+       where
+           s.date >= %s and
+           s.date <= %s and
+           b.id = s.blog_id
+       group by
+           b.id
+       order by
+           sum(s.visits_daily_average) desc;'''
+
+    # Get the data:
+    objects = Blog.objects.raw(query, [initial_date, final_date])
+    context['objects'] = objects
+    context['start_date'] = initial_date
+    context['end_date'] = final_date
+
+    # Pagination
+    paginator = Paginator(list(objects), PAGE_DISPLAY)
+    page = request.GET.get('page', 1)
+    try:
+        stats = paginator.page(page)
+    except PageNotAnInteger:
+        stats = paginator.page(1)
+    except EmptyPage:
+        stats = paginator.page(paginator.num_pages)
+    context['page'] = stats
+
+    return render_to_response('stats_period.html', context,
+                context_instance=RequestContext(request))
 
 ## Aggregate stats
 def aggregate_stats(request, year, month):
@@ -264,7 +320,7 @@ def blog_search(request):
     # this search method has to be changed.
     result = Blog.objects.filter( Q(name__icontains = query) |
                                  Q(sitemeter_key__icontains = query) |
-                                 Q(url__icontains = query) 
+                                 Q(url__icontains = query)
                                ).order_by('name')
 
     paginator = Paginator(result, PAGE_DISPLAY)
@@ -287,7 +343,7 @@ def blog_info(request, blog_id):
     context = {}
 
     blog = get_object_or_404(Blog, id = blog_id )
-        
+
     objects = Stats.objects.filter(blog__exact = blog ).order_by( '-date' )
     paginator = Paginator(objects, PAGE_DISPLAY)
 
