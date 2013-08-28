@@ -68,18 +68,28 @@ class UpdateStats(object):
         self.blog = blog
 
     def get_raw(self, soup):
-        # The nearest common element sequence
-        stats_table = soup.find('table', { 'id':'Table_02' } ).contents[7
-                        ].contents[3].contents[3].contents[1
-                        ].contents[3].contents[1].contents
-        # Unparsed list of visit stats                
-        visits_stats = [ stats_table[i].contents[2].font.renderContents() 
-                           for i in range(4,10) ]
-        # Unparsed list of page views stats                   
-        stats_pages = [ stats_table[i].contents[2].font.renderContents()
-                            for i in range(13,19) ]
 
-        return visits_stats + stats_pages                    
+        try:
+            stats_table = soup.find('table', { 'id':'Table_02' } ).contents[7
+                            ].contents[3].contents[3].contents[1
+                            ].contents[3].contents[1].contents
+            # Unparsed list of visit stats
+            visits_stats = [ stats_table[i].contents[2].font.renderContents()
+                               for i in range(4,10) ]
+            # Unparsed list of page views stats
+            stats_pages = [ stats_table[i].contents[2].font.renderContents()
+                                for i in range(13,19) ]
+
+            return visits_stats + stats_pages
+        except IndexError:
+            txt = list(soup.findAll(text=True))
+            txt = [ xi for xi in txt[txt.index(u'VISITS'):] if xi != u'\xa0\xa0' ][:26]
+
+            remove = [u'VISITS', u'Total', u'Average Per Day',u'Average Visit Length',u'Last Hour',u'Today',u'This Week',u'PAGE VIEWS', u'Total',u'Average Per Day',u'Average Per Visit',u'Last Hour',u'Today',u'This Week']
+
+            txt = [ str(xi) for xi in txt if xi not in remove ]
+
+            return txt
 
     def parse(self, raw_result):
         result = {}
@@ -91,7 +101,7 @@ class UpdateStats(object):
         result['visits_this_week'] = get_int(raw_result[5])
         result['pages_total'] = get_int(raw_result[6])
         result['pages_daily_average'] = get_int(raw_result[7])
-        result['pages_visit_average'] = get_float(raw_result[8]) 
+        result['pages_visit_average'] = get_float(raw_result[8])
         result['pages_last_hour'] = get_int(raw_result[9])
         result['pages_today'] = get_int(raw_result[10])
         result['pages_this_week'] = get_int(raw_result[11])
@@ -101,10 +111,10 @@ class UpdateStats(object):
     def save_reading(self, result):
         stats = Stats()
 
-        stats.blog = self.blog 
+        stats.blog = self.blog
 
         stats.visits_total            = result['visits_total']
-        stats.visits_daily_average    = result['visits_daily_average'] 
+        stats.visits_daily_average    = result['visits_daily_average']
         stats.visits_lenght_average   = result['visits_lenght_average']
         stats.visits_last_hour        = result['visits_last_hour']
         stats.visits_today            = result['visits_today']
@@ -116,7 +126,7 @@ class UpdateStats(object):
         stats.pages_today             = result['pages_today']
         stats.pages_this_week         = result['pages_this_week']
 
-        stats.save() 
+        stats.save()
 
     def run(self):
         print '* Getting stats for: %s' % du(self.blog.name)
@@ -127,7 +137,7 @@ class UpdateStats(object):
         raw_result = self.get_raw(soup)
         parsed_result = self.parse(raw_result)
 
-        self.save_reading(parsed_result) 
+        self.save_reading(parsed_result)
 
 MAXBLOGERROR = 10
 STOPHOUR = 8 # Stop the scraper after STOPHOUR
@@ -143,7 +153,7 @@ class SitemeterScraper(object):
             Stats.objects.get( blog = blog, date = date.today() )
             print "  Already got today's stats."
             return True
-        except ObjectDoesNotExist:    
+        except ObjectDoesNotExist:
             return False
 
     def read_blog(self, sitemeter_key ):
@@ -169,6 +179,7 @@ class SitemeterScraper(object):
         except Exception, msg:
             # Uncaught error
             print "* ERROR: %s" % msg
+            raise
 
     def calc_stop_hour(self):
         now = datetime.now()
@@ -178,8 +189,8 @@ class SitemeterScraper(object):
             year, month, day = tomorrow.year, tomorrow.month, tomorrow.day
         else:
             year, month, day = now.year, now.month, now.day
-            
-        return datetime(year, month, day, STOPHOUR) 
+
+        return datetime(year, month, day, STOPHOUR)
 
     def run(self):
         stop_hour = self.calc_stop_hour()
@@ -215,14 +226,14 @@ class SitemeterScraper(object):
                 exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
                 tb = traceback.format_exc()
                 print tb
-            finally:    
-                blog.last_try = datetime.now()    
+            finally:
+                blog.last_try = datetime.now()
                 blog.save()
 
             if datetime.now() > stop_hour:
-                print '* Exceeded the alloted time, bailing out.'  
+                print '* Exceeded the alloted time, bailing out.'
                 break
-                                    
+
             t = 0.5
             print '  Sleeping %4.2f seconds' % t
             time.sleep(t)
