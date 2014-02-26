@@ -5,16 +5,19 @@ import calendar
 import urllib
 
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.decorators import login_required
+from django.core.context_processors import csrf
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.core.urlresolvers import reverse
 from django.db.models import Max
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render_to_response, redirect, get_object_or_404
 from django.template import RequestContext
-from django.core.urlresolvers import reverse
 
 from meter.models import Blog, Stats
+from meter.forms import AddBlogForm
 
 PAGE_DISPLAY = 30
 FIRSTYEAR = 2012
@@ -359,4 +362,26 @@ def blog_info(request, blog_id):
     context['blog'] = blog
 
     return render_to_response('blog_info.html', context,
+                context_instance=RequestContext(request))
+
+##
+## Admin views
+##
+
+@login_required
+def blog_add(request):
+    context = {}
+    context.update(csrf(request))
+
+    if not request.user.is_staff:
+        raise PermissionDenied
+
+    if request.method == 'POST':
+        form = AddBlogForm(request.POST)
+    else:
+        form = AddBlogForm()
+
+    context['form'] = form
+
+    return render_to_response('blog_add.html', context,
                 context_instance=RequestContext(request))

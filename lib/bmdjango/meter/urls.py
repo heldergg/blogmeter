@@ -27,5 +27,8 @@ urlpatterns = patterns('meter.views',
 
     # Blog info
     url(r'^info/(?P<blog_id>\d+)/$', 'blog_info', name='blog_info' ),
+
+    # Add new blog
+    url(r'^add/$', 'blog_add', name='blog_add' ),
     )
 

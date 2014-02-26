@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% endblock %}
+
+{% block body_content %}
+<h1>Adicionar um novo blog à base de dados</h1> 
+
+<p>No campo a seguir insira o URL base de um blog. 
+<p>Por exemplo, se quisermos acrescentar o Aventar ao Blogómetro, dever-se-ia indicar o URL: 
+
+<pre>
+http://www.aventar.eu/
+</pre>
+<form method="POST" action="">{% csrf_token %}
+  <table>
+    {{ form }}
+    <tr>
+      <td colspan=2>
+          <div style="text-align:right;">
+            <button style="width:12em" type="submit" value="Submit">Adicionar Blog</button>
+          </div>
+      </td>
+    </tr>
+  </table>
+</form>
+
+{% endblock %}
