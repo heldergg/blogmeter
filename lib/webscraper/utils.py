@@ -79,6 +79,7 @@ class AddBlog(object):
 
 
         sitemeter_key = re.findall(sitemeter_re, html)
+        sitemeter_key = list(set(sitemeter_key))
         if len(sitemeter_key) > 1:
             print '  Multi sitemeter keys, aborting!'
             sys.exit(1)
@@ -133,3 +134,29 @@ http://support.sitemeter.com/index.php?_m=knowledgebase&_a=viewarticle&kbarticle
 
         scraper = SitemeterScraper()
         scraper.read_blog(sitemeter_key)
+
+        print '''
+Inscrição feita, mas não conseguimos ler as suas estatísticas, veja por favor o nosso FAQ:
+
+    http://blogometro.aventar.eu/faq/
+
+As suas estatísticas irão aparecer em:
+
+    http://blogometro.aventar.eu/mt/info/%s/
+
+Se não resolver o problema em 10 dias desistimos de tentar ler as suas estatísticas. Se isso acontecer, basta mandar-me um mail para eu fazer a activação.
+
+/Helder
+
+
+Blogómetro - %s
+
+
+Feito!
+
+Pode consultar as estatísticas do blog em:
+
+http://blogometro.aventar.eu/mt/info/%s/
+
+/Helder
+''' % ( blog.id, name, blog.id )
