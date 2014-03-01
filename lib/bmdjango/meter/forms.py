@@ -7,7 +7,7 @@ class AddBlogForm(forms.Form):
     """
     Form used to add a blog to the blogometer
     """
-    q = forms.CharField(
+    url = forms.CharField(
         label = 'URL blog',
         required=True,
         max_length=1000,)

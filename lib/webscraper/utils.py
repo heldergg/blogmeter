@@ -30,6 +30,12 @@ socket.setdefaulttimeout(60)
 from meter.models import Blog
 from django.db.utils import IntegrityError
 
+# Errors
+class UtilsError(Exception):
+    def __init__(self, expr, msg=None):
+        self.expr = expr
+        self.msg = msg
+
 
 ##
 ## Utils
@@ -70,23 +76,26 @@ class AddBlog(object):
 
 
     def run(self):
-        print '* Getting page: ', self.url
+        message = u''
+        message += u'  Ler página do blog: %s\n' % self.url
         html = urllib.urlopen(self.url).read()
         soup = bs4.BeautifulSoup(html)
 
-        name = soup.title.renderContents().strip()
-        print '  Blog name: ', name
+        name =  unicode(soup.title.renderContents().strip(), 'utf-8')
+        message += u'  Nome do blog: %s\n' % name
 
 
         sitemeter_key = re.findall(sitemeter_re, html)
         sitemeter_key = list(set(sitemeter_key))
         if len(sitemeter_key) > 1:
-            print '  Multi sitemeter keys, aborting!'
-            sys.exit(1)
+            message += u'  Multi sitemeter keys, aborting!'
+            raise UtilsError('Multi sitemeter keys, aborting!', message)
 
         elif len(sitemeter_key) == 0:
-            print '  Didn\'t find a sitemeter key, aborting!'
-            print '''
+            message += u'  Não encontrei a chave do sitemeter. Vou desistir.\n'
+            message += u'''
+Pode enviar a seguinte mensagem a quem tentou inscrever o blog:
+
 Não encontrei a chave do sitemeter no seu blog. Antes de pudermos
 inscrever o blog no Blogómetro é necessário conseguirmos ler as
 respectivas estatísticas. Leia por favor o nosso FAQ:
@@ -107,14 +116,13 @@ http://www.sitemeter.com/flash/installation/blogger/blogspot_video.html
 
 http://support.sitemeter.com/index.php?_m=knowledgebase&_a=viewarticle&kbarticleid=155
 
-
-/Helder
+/Aventar
             '''
-            sys.exit(1)
+            raise UtilsError('Didn\'t find a sitemeter key, aborting!', message)
 
         sitemeter_key = sitemeter_key[0]
 
-        print '  Sitemeter key: ', sitemeter_key
+        message += u'  Chave do sitemeter: %s\n' % sitemeter_key
 
         blog = Blog(
             name = name,
@@ -124,39 +132,54 @@ http://support.sitemeter.com/index.php?_m=knowledgebase&_a=viewarticle&kbarticle
         try:
             blog.save()
         except IntegrityError:
-            print '  Duplicated sitemer key, aborting!'
-            sys.exit(1)
+            message += u'  Chave do sitemeter duplicada na base de dados, vou desistir!'
+            raise UtilsError(u'Duplicated sitemer key, aborting!', message)
 
-        print '  Success! Added "%s" blog to the database.' % name
-        print '  Statistics URL: http://blogometro.aventar.eu/mt/info/%d/' % blog.id
+        message +=  u'  Sucesso, adicionei o blog "%s" à base de dados.\n' % name
+        message +=  u'  URL das estatísticas: http://blogometro.aventar.eu/mt/info/%d/' % blog.id
 
         from webscraper.scrapstats import SitemeterScraper
 
         scraper = SitemeterScraper()
-        scraper.read_blog(sitemeter_key)
+        try:
+            stats = scraper.read_blog(sitemeter_key)
+        except AttributeError:
+            stats = None
 
-        print '''
-Inscrição feita, mas não conseguimos ler as suas estatísticas, veja por favor o nosso FAQ:
+        if stats:
+            message +=  u'''
+Pode enviar a seguinte mensagem a quem tentou inscrever o blog:
 
-    http://blogometro.aventar.eu/faq/
-
-As suas estatísticas irão aparecer em:
-
-    http://blogometro.aventar.eu/mt/info/%s/
-
-Se não resolver o problema em 10 dias desistimos de tentar ler as suas estatísticas. Se isso acontecer, basta mandar-me um mail para eu fazer a activação.
-
-/Helder
-
-
-Blogómetro - %s
-
+ASSUNTO: Blogómetro - %(blog_name)s
 
 Feito!
 
 Pode consultar as estatísticas do blog em:
 
-http://blogometro.aventar.eu/mt/info/%s/
+http://blogometro.aventar.eu/mt/info/%(blog_id)s/
 
-/Helder
-''' % ( blog.id, name, blog.id )
+/Aventar
+''' % { 'blog_id': blog.id, 'blog_name': name }
+        else:
+            message +=  u'''
+Pode enviar a seguinte mensagem a quem tentou inscrever o blog:
+
+ASSUNTO: Blogómetro - %(blog_name)s
+
+Inscrição feita, mas não conseguimos ler as suas estatísticas,
+veja por favor o nosso FAQ:
+
+    http://blogometro.aventar.eu/faq/
+
+As suas estatísticas irão aparecer em:
+
+    http://blogometro.aventar.eu/mt/info/%(blog_id)s/
+
+Se não resolver o problema em 10 dias desistimos de tentar ler as
+suas estatísticas. Se isso acontecer, basta mandar-me um mail para
+eu fazer a activação.
+
+/Aventar
+''' % { 'blog_id': blog.id, 'blog_name': name }
+
+        return message

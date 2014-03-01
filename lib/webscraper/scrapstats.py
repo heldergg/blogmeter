@@ -172,7 +172,7 @@ class SitemeterScraper(object):
             blog.error_count = 0
             blog.save()
             print "* Success!"
-            return stats
+            return True
         except socket.timeout:
             # There was a timeout
             print "* ERROR: There was a time out maybe the server is busy, try again later"

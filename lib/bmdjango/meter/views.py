@@ -18,6 +18,7 @@ from django.template import RequestContext
 
 from meter.models import Blog, Stats
 from meter.forms import AddBlogForm
+from webscraper.utils import AddBlog,UtilsError
 
 PAGE_DISPLAY = 30
 FIRSTYEAR = 2012
@@ -372,16 +373,29 @@ def blog_info(request, blog_id):
 def blog_add(request):
     context = {}
     context.update(csrf(request))
+    context['success'] = False
+    message = ''
 
     if not request.user.is_staff:
         raise PermissionDenied
 
     if request.method == 'POST':
         form = AddBlogForm(request.POST)
+        if form.is_valid():
+            url = form.cleaned_data['url']
+            add_tool = AddBlog(url)
+            try:
+                message = add_tool.run()
+                context['success'] = True
+            except UtilsError,e:
+                message = e.msg
     else:
         form = AddBlogForm()
 
     context['form'] = form
+    context['message'] = message
+
+    print message
 
     return render_to_response('blog_add.html', context,
                 context_instance=RequestContext(request))

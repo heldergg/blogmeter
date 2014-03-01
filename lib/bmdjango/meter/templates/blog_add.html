@@ -4,6 +4,20 @@
 {% endblock %}
 
 {% block body_content %}
+{% if message %}
+{% if success %}
+<h1>Blog adicionado com sucesso</h1>
+{% else %}
+<h1>Erro ao adicionar o blog</h1>
+{% endif %}
+<p>Foram executados os seguintes passos:
+<hr>
+<pre>
+{{ message }}
+</pre>
+<hr>
+<p>Se quiser, pode adicionar outro blog:
+{% endif %}
 <h1>Adicionar um novo blog à base de dados</h1> 
 
 <p>No campo a seguir insira o URL base de um blog. 
