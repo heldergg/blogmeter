@@ -76,6 +76,7 @@ class AddBlog(object):
 
 
     def run(self):
+        logger.info('ADD BLOG %s' % self.url)
         message = u''
         message += u'  Ler página do blog: %s\n' % self.url
         html = urllib.urlopen(self.url).read()
@@ -92,6 +93,7 @@ class AddBlog(object):
             raise UtilsError('Multi sitemeter keys, aborting!', message)
 
         elif len(sitemeter_key) == 0:
+            logger.info('No Sitemeter key for %s' % self.url)
             message += u'  Não encontrei a chave do sitemeter. Vou desistir.\n'
             message += u'''
 Pode enviar a seguinte mensagem a quem tentou inscrever o blog:
@@ -132,6 +134,7 @@ http://support.sitemeter.com/index.php?_m=knowledgebase&_a=viewarticle&kbarticle
         try:
             blog.save()
         except IntegrityError:
+            logger.info('Duplicated Sitemeter key for %s' % self.url)
             message += u'  Chave do sitemeter duplicada na base de dados, vou desistir!'
             raise UtilsError(u'Duplicated sitemer key, aborting!', message)
 
@@ -147,6 +150,7 @@ http://support.sitemeter.com/index.php?_m=knowledgebase&_a=viewarticle&kbarticle
             stats = None
 
         if stats:
+            logger.info('Success %s' % self.url)
             message +=  u'''
 Pode enviar a seguinte mensagem a quem tentou inscrever o blog:
 
@@ -161,6 +165,7 @@ http://blogometro.aventar.eu/mt/info/%(blog_id)s/
 /Aventar
 ''' % { 'blog_id': blog.id, 'blog_name': name }
         else:
+            logger.info('Could not get stats %s' % self.url)
             message +=  u'''
 Pode enviar a seguinte mensagem a quem tentou inscrever o blog:
 
