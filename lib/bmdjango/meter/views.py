@@ -387,6 +387,7 @@ def blog_add(request):
             try:
                 message = add_tool.run()
                 context['success'] = True
+                form = AddBlogForm()
             except UtilsError,e:
                 message = e.msg
     else:
@@ -394,8 +395,6 @@ def blog_add(request):
 
     context['form'] = form
     context['message'] = message
-
-    print message
 
     return render_to_response('blog_add.html', context,
                 context_instance=RequestContext(request))
