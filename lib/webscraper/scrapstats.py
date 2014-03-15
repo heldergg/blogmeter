@@ -129,8 +129,8 @@ class UpdateStats(object):
         stats.save()
 
     def run(self):
-        print '* Getting stats for: %s' % du(self.blog.name)
-        print '  %s' % self.blog.sitemeter_url()
+        logger.info( '* Getting stats for: %s' % du(self.blog.name) )
+        logger.info( '  %s' % self.blog.sitemeter_url() )
 
         html = urllib.urlopen(self.blog.sitemeter_url()).read()
         soup = bs4.BeautifulSoup(html)
@@ -151,7 +151,7 @@ class SitemeterScraper(object):
         '''
         try:
             Stats.objects.get( blog = blog, date = date.today() )
-            print "  Already got today's stats."
+            logger.info( "  Already got today's stats." )
             return True
         except ObjectDoesNotExist:
             return False
@@ -160,10 +160,10 @@ class SitemeterScraper(object):
         try:
             blog = Blog.objects.get( sitemeter_key = sitemeter_key )
             if self.check_stat( blog ):
-                print "* ERROR: We have read this blog's stats today, bailing out."
+                logger.info( "* ERROR: We have read this blog's stats today, bailing out." )
                 return
         except ObjectDoesNotExist:
-            print "* ERROR: Sorry, we don't have %s key in our db." % sitemeter_key
+            logger.info( "* ERROR: Sorry, we don't have %s key in our db." % sitemeter_key )
             return
 
         try:
@@ -171,14 +171,14 @@ class SitemeterScraper(object):
             # Reset the read error count
             blog.error_count = 0
             blog.save()
-            print "* Success!"
+            logger.info( "* Success!" )
             return True
         except socket.timeout:
             # There was a timeout
-            print "* ERROR: There was a time out maybe the server is busy, try again later"
+            logger.info( "* ERROR: There was a time out maybe the server is busy, try again later" )
         except Exception, msg:
             # Uncaught error
-            print "* ERROR: %s" % msg
+            logger.info( "* ERROR: %s" % msg )
             raise
 
     def calc_stop_hour(self):
@@ -205,7 +205,7 @@ class SitemeterScraper(object):
             # Sleep for a little bit if the last stat read was less than
             # 5 minutes ago.
             if (datetime.now() - blog.last_try) < timedelta(0, 5 * 60):
-                print '  Read this stat less than 5 minutes ago. Sleeping a bit'
+                logger.info( '  Read this stat less than 5 minutes ago. Sleeping a bit' )
                 time.sleep(60)
 
             # Read the blog stats
@@ -216,24 +216,24 @@ class SitemeterScraper(object):
             except (socket.timeout, IndexError) as e:
                 # Recoverable error, going to try again
                 blog_list.insert(0, blog)
-                print '  Returned the blog to the queue.'
+                logger.info( '  Returned the blog to the queue.' )
             except Exception, msg:
                 # Increase the blog's error count
                 blog.error_count = blog.error_count + 1
-                print msg
+                logger.info( msg )
 
                 # Print the error traceback (for debugging):
                 exceptionType, exceptionValue, exceptionTraceback = sys.exc_info()
                 tb = traceback.format_exc()
-                print tb
+                logger.info( tb )
             finally:
                 blog.last_try = datetime.now()
                 blog.save()
 
             if datetime.now() > stop_hour:
-                print '* Exceeded the alloted time, bailing out.'
+                logger.info( '* Exceeded the alloted time, bailing out.' )
                 break
 
             t = 0.5
-            print '  Sleeping %4.2f seconds' % t
+            logger.info( '  Sleeping %4.2f seconds' % t )
             time.sleep(t)

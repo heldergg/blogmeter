@@ -158,7 +158,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
 
     # Blogmeter apps:
-
     'meter',
     'authapp',
     'registrationapp'
@@ -175,30 +174,53 @@ INSTALLED_APPS = (
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
 
-LOGDIR  = os.path.join(project_dir, 'log')
+import sys
+
+LOGDIR  = os.path.join(project_dir, '..', 'log')
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
+        'version': 1,
+        'disable_existing_loggers': True,
+        'formatters': {
+            'verbose': {
+                'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+                },
+            'simple': {
+                'format': '%(levelname)s %(message)s'
+                }
+            },
+        'handlers': {
+            'console': {
+                'level':'DEBUG',
+                'class':'logging.StreamHandler',
+                'stream': sys.stdout,
+                'formatter':'simple'
+                },
+            'default': {
+                'level':'INFO',
+                'class':'logging.handlers.RotatingFileHandler',
+                'filename': os.path.join(LOGDIR, 'blogometro.log'),
+                'maxBytes': 1024*1024*50, # 50MB
+                'backupCount': 5,
+                'formatter':'verbose',
+                },
+
+            },
+        'loggers': {
+            'django': {
+                'handlers':['default'],
+                'filters': [],
+                'propagate': True,
+                'level':'DEBUG',
+                },
+            'webscraper': {
+                'handlers':['console','default'],
+                'filters': [],
+                'propagate': True,
+                'level':'INFO',
+                },
+            },
         }
-    },
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    }
-}
+
 
 ##
 ## Authentication and sessions
