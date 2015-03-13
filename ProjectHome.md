@@ -1,0 +1,1 @@
+On this system we collect browsing data from blogs and present them ordered in a web page.
